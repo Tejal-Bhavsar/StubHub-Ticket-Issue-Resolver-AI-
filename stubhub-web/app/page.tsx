@@ -7,63 +7,63 @@ import DisputeChat from '@/components/DisputeChat';
 export default function Home() {
   const trendingEvents = [
     {
-      image: "",
-      title: "Christopher Cross",
-      date: "Sat, Mar 21 • 7:30 PM",
-      location: "Stiefel Theatre",
+      image: "/events/concert.png",
+      title: "Electric Pulse Tour - Taylor Swift",
+      date: "Sat, Oct 26 • 8:00 PM",
+      location: "MetLife Stadium, NJ",
       price: 402
     },
     {
-      image: "",
-      title: "Old Crow Medicine Show",
-      date: "Thu, May 14 • 7:30 PM",
-      location: "Stiefel Theatre",
-      price: 650
+      image: "/events/sports.png",
+      title: "Manchester City vs Liverpool",
+      date: "Sun, Nov 12 • 4:30 PM",
+      location: "Etihad Stadium, UK",
+      price: 150
     },
     {
-      image: "",
-      title: "Wilco",
-      date: "Mon, May 04 • 7:30 PM",
-      location: "Stiefel Theatre",
-      price: 279
+      image: "/events/festival.png",
+      title: "Coachella Valley Music Festival",
+      date: "Fri, Apr 14 • 12:00 PM",
+      location: "Indio, CA",
+      price: 549
     },
     {
-      image: "",
-      title: "NEEDTOBREATHE",
+      image: "/events/theater.png",
+      title: "Hamilton - Broadway",
       date: "Fri, Feb 27 • 7:30 PM",
-      location: "Stiefel Theatre",
+      location: "Richard Rodgers Theatre, NY",
       price: 968
     },
   ];
 
   const recommendedEvents = [
     {
-      image: "",
-      title: "ZZ Top",
+      image: "/events/concert.png",
+      title: "Coldplay - Music of the Spheres",
       date: "Sat, Mar 21 • 7:30 PM",
-      location: "Stiefel Theatre",
-      price: 517
+      location: "Wembley Stadium, UK",
+      price: 217
     },
     {
-      image: "",
-      title: "Miranda Lambert",
-      date: "Thu, May 14 • 7:30 PM",
-      location: "Stiefel Theatre",
-      price: 83
+      image: "/events/festival.png",
+      title: "Glastonbury Festival 2025",
+      date: "Thu, Jun 26 • 10:00 AM",
+      location: "Worthy Farm, UK",
+      price: 350
     },
     {
-      image: "",
-      title: "Jason Mraz",
+      image: "/events/theater.png",
+      title: "The Lion King",
       date: "Mon, May 04 • 7:30 PM",
-      location: "Stiefel Theatre",
-      price: 402
+      location: "Minskoff Theatre, NY",
+      price: 185
     },
     {
-      image: "",
-      title: "Kenny Chesney",
-      date: "Fri, Feb 27 • 7:30 PM",
-      location: "Stiefel Theatre",
-      price: 968
+      image: "/events/sports.png",
+      title: "NBA Finals - Game 1",
+      date: "Thu, Jun 05 • 8:30 PM",
+      location: "TD Garden, MA",
+      price: 850
     },
   ];
 

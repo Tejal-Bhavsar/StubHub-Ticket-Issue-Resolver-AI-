@@ -21,6 +21,9 @@ export default function DisputeChat() {
         setLoading(true);
 
         try {
+            // Simulate artificial delay for "typing" effect (1.5s - 3s)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
             const res = await fetch('/api/agent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -122,7 +125,7 @@ export default function DisputeChat() {
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             placeholder="Describe your issue..."
-                            className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-[var(--stubhub-purple)]"
+                            className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm text-black focus:outline-none focus:border-[var(--stubhub-purple)]"
                         />
                         <button
                             type="submit"

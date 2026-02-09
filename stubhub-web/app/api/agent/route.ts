@@ -142,74 +142,49 @@ export async function POST(req: Request) {
     Based on the above, provide your resolution in the specified format.
     `;
 
-        // 3. Simulated LLM Response (Dynamic Logic based on keywords)
-        let simulatedResponse = "";
-        const lowerMessage = message.toLowerCase();
+        // 3. AI Agent Decision (Ollama - Local LLM)
+        const { Ollama } = require('ollama');
 
-        if (lowerMessage.includes("fake") || lowerMessage.includes("invalid") || lowerMessage.includes("scam") || lowerMessage.includes("counterfeit")) {
-            // Scenario 1: Fraud Claim (Full Refund)
-            simulatedResponse = `
-ISSUE SUMMARY: Buyer claims tickets for the completed event were fake/invalid.
-DECISION: Full Refund to Buyer
-REASONING: The buyer provided a strong claim of invalid entry. Given the 'fairness first' rule and the fact that the event is completed, we prioritize the buyer's experience. The seller has a strong history, but this specific inventory is now suspect.
+        const ollamaHost = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434';
+        const ollamaModel = process.env.OLLAMA_MODEL || 'llama3';
+
+        const ollama = new Ollama({ host: ollamaHost });
+
+        try {
+            // For debugging
+            console.log(`Connecting to Ollama at ${ollamaHost} with model ${ollamaModel}`);
+
+            const response = await ollama.chat({
+                model: ollamaModel,
+                messages: [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    { role: "user", content: prompt }
+                ],
+                options: {
+                    temperature: 0,
+                    num_predict: 1000,
+                }
+            });
+
+            const aiResponse = response.message.content;
+            return NextResponse.json({ decision: aiResponse });
+
+        } catch (ollamaError: any) {
+            console.error("Ollama connection error:", ollamaError);
+            // Fallback to simulation if Ollama fails (e.g., not running)
+            return NextResponse.json({
+                decision: `
+ISSUE SUMMARY: Connection to Local AI Failed.
+DECISION: System Error
+REASONING: Could not connect to Ollama at ${ollamaHost}. Is it running?
 ACTIONS:
-- Process full refund of $${order.price} to Buyer.
-- Flag Seller ${order.seller_id} for internal review regarding this specific event inventory.
-- Send confirmation email to Buyer.
-FLAGS: Potential inventory issue with Seller ${order.seller_id}.
-ESCALATION NEEDED: No, falls within standard refund logic for verified buyer complaints.
-`;
-        } else if (lowerMessage.includes("receive") || lowerMessage.includes("delivered") || lowerMessage.includes("missing") || lowerMessage.includes("sent")) {
-            // Scenario 2: Delivery Issue (Partial Refund / Investigation)
-            simulatedResponse = `
-ISSUE SUMMARY: Buyer claims tickets were not received in time or at all.
-DECISION: Full Refund to Buyer (Pending Seller Proof)
-REASONING: Non-delivery is a critical failure. Unless the seller can provide immediate proof of transfer acceptance, the buyer is entitled to a refund.
-ACTIONS:
-- Initiate refund of $${order.price} to Buyer.
-- Request proof of transfer from Seller ${order.seller_id} within 24 hours.
-FLAGS: Monitoring seller for repeated non-delivery.
-ESCALATION NEEDED: No, standard non-delivery protocol.
-`;
-        } else if (lowerMessage.includes("mistake") || (lowerMessage.includes("change") && lowerMessage.includes("mind")) || lowerMessage.includes("accidental") || lowerMessage.includes("wrong")) {
-            // Scenario 3: Buyer Remorse (Deny Refund)
-            simulatedResponse = `
-ISSUE SUMMARY: Buyer wants to return tickets due to personal reasons/mistake.
-DECISION: Deny Refund / Relist for Sale
-REASONING: All sales are final on StubHub unless the event is cancelled or tickets are invalid. Buyer's remorse is not a valid ground for a refund. We can assist the buyer in relisting the tickets.
-ACTIONS:
-- Inform Buyer that refund is denied per policy.
-- Provide instructions on how to 'Relist' tickets for sale.
-FLAGS: None.
-ESCALATION NEEDED: No.
-`;
-        } else if (lowerMessage.includes("price") || lowerMessage.includes("expensive") || lowerMessage.includes("cost") || lowerMessage.includes("gouging")) {
-            // Scenario 4: Price Complaint (Deny Refund)
-            simulatedResponse = `
-ISSUE SUMMARY: Buyer is complaining about the ticket price relative to face value.
-DECISION: Deny Refund
-REASONING: StubHub is a secondary marketplace where prices are set by sellers and may be above valid price. The buyer agreed to the price at checkout.
-ACTIONS:
-- Explain pricing model to the buyer.
-- Close the dispute as 'Policy - Pricing'.
-FLAGS: None.
-ESCALATION NEEDED: No.
-`;
-        } else {
-            // Default / Unclear
-            simulatedResponse = `
-ISSUE SUMMARY: Unclassified dispute or general inquiry.
-DECISION: Escalate for Human Review
-REASONING: The simplistic rule-based agent could not confidently categorize the issue based on the provided text. Human intervention is needed to parse the nuances.
-ACTIONS:
-- Ticket assigned to Senior Support Agent.
-- Auto-response sent to buyer acknowledging receipt.
-FLAGS: Ambiguous claim.
-ESCALATION NEEDED: Yes, for manual classification.
-`;
+- Please run 'ollama serve' in your terminal.
+- Ensure model '${ollamaModel}' is pulled ('ollama pull ${ollamaModel}').
+FLAGS: Technical Error.
+ESCALATION NEEDED: Yes, for system check.
+`
+            });
         }
-
-        return NextResponse.json({ decision: simulatedResponse });
 
     } catch (error) {
         console.error('Error processing dispute:', error);
