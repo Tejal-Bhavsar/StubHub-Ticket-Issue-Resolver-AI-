@@ -1,14 +1,29 @@
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environments
-venv/
-env/
-.env
-
-# Next.js
-.next/
+# Next.js / Node
+stubhub-web/node_modules/
+stubhub-web/.next/
 node_modules/
-dist/
+.next/
+
+# Environment files
+.env
+.env*
+.env.local
+
+# Logs and Tunnels
+*.log
+ngrok.log
+cloudflared.log
+
+# Large Binaries / Demos
+*.webp
+demo_video.webp
+
+# IDE and OS
 .DS_Store
+.vscode/
+.idea/

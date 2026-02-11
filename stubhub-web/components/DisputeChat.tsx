@@ -1,12 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, Bot, User, AlertCircle, CheckCircle } from 'lucide-react';
+import { Send, Bot, User, AlertCircle, CheckCircle, Scale, FileText, ShieldCheck, HelpCircle, ArrowRight, Info } from 'lucide-react';
 
 export default function DisputeChat() {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [chatHistory, setChatHistory] = useState<Array<{ role: 'user' | 'agent', content: string, decision?: any }>>([]);
+    const [chatHistory, setChatHistory] = useState<Array<{
+        role: 'user' | 'agent',
+        content: string,
+        type?: 'analysis' | 'decision' | 'reasoning' | 'step' | 'support' | 'error'
+    }>>([]);
     const [loading, setLoading] = useState(false);
     const [orderId, setOrderId] = useState('ORD-123'); // Default for demo
 
@@ -14,15 +18,13 @@ export default function DisputeChat() {
         e.preventDefault();
         if (!message.trim()) return;
 
-        // Add user message to chat
         const userMsg = message;
         setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
         setMessage('');
         setLoading(true);
 
         try {
-            // Simulate artificial delay for "typing" effect (1.5s - 3s)
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 1500));
 
             const res = await fetch('/api/agent', {
                 method: 'POST',
@@ -33,13 +35,72 @@ export default function DisputeChat() {
             const data = await res.json();
 
             if (data.decision) {
+                // Parse the structured decision
+                const decisionText = data.decision;
+                const sections = decisionText.split('\n\n');
+
+                // 1. Initial analysis message
                 setChatHistory(prev => [...prev, {
                     role: 'agent',
-                    content: "I've analyzed your case. Here is my decision:",
-                    decision: data.decision
+                    type: 'analysis',
+                    content: "I've analyzed your case. Based on StubHub's policies and the transaction context, here is my decision:"
                 }]);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // 2. Main Decision & Reasoning
+                const decisionMatch = decisionText.match(/DECISION:\s*(.*)/);
+                const reasoningMatch = decisionText.match(/REASONING:\s*(.*)/);
+
+                if (decisionMatch) {
+                    setChatHistory(prev => [...prev, {
+                        role: 'agent',
+                        type: 'decision',
+                        content: decisionMatch[1]
+                    }]);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
+                if (reasoningMatch) {
+                    setChatHistory(prev => [...prev, {
+                        role: 'agent',
+                        type: 'reasoning',
+                        content: reasoningMatch[1]
+                    }]);
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                }
+
+                // 3. Next Steps (Step by Step)
+                const nextStepsSection = decisionText.split('NEXT STEPS FOR CUSTOMER:')[1]?.split('SUPPORT OPTIONS:')[0];
+                if (nextStepsSection) {
+                    const steps = nextStepsSection.trim().split('\n').filter((s: string) => s.trim() !== '');
+                    for (const step of steps) {
+                        const cleanStep = step.replace(/^\d+\.\s*/, '').replace(/^-\s*/, '').trim();
+                        if (cleanStep) {
+                            setChatHistory(prev => [...prev, {
+                                role: 'agent',
+                                type: 'step',
+                                content: cleanStep
+                            }]);
+                            await new Promise(resolve => setTimeout(resolve, 1200));
+                        }
+                    }
+                }
+
+                // 4. Support Options
+                const supportSection = decisionText.split('SUPPORT OPTIONS:')[1];
+                if (supportSection) {
+                    const options = supportSection.trim().split('\n').filter((s: string) => s.trim() !== '');
+                    if (options.length > 0) {
+                        setChatHistory(prev => [...prev, {
+                            role: 'agent',
+                            type: 'support',
+                            content: options.map((o: string) => o.replace(/^-\s*/, '• ')).join('\n')
+                        }]);
+                    }
+                }
+
             } else if (data.error) {
-                setChatHistory(prev => [...prev, { role: 'agent', content: `Error: ${data.error}` }]);
+                setChatHistory(prev => [...prev, { role: 'agent', type: 'error', content: `Error: ${data.error}` }]);
             }
 
         } catch (error) {
@@ -85,22 +146,35 @@ export default function DisputeChat() {
 
                         {chatHistory.map((msg, idx) => (
                             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[85%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-[var(--stubhub-purple)] text-white' : 'bg-white border border-gray-200 text-gray-800'}`}>
-                                    <p className="whitespace-pre-wrap text-sm">{msg.content}</p>
+                                <div className={`max-w-[85%] rounded-lg p-3 ${msg.role === 'user'
+                                    ? 'bg-[var(--stubhub-purple)] text-white'
+                                    : 'bg-white border border-gray-200 text-gray-800'
+                                    } shadow-sm`}>
 
-                                    {/* Render Structured Decision if present */}
-                                    {msg.decision && (
-                                        <div className="mt-3 pt-3 border-t border-gray-100 text-xs space-y-2">
-                                            <div className="font-bold text-[var(--stubhub-purple)]">DECISION RECEIVED</div>
-                                            <pre className="whitespace-pre-wrap bg-gray-50 p-2 rounded text-gray-600 font-mono text-[10px]">
-                                                {msg.decision}
-                                            </pre>
-                                            <div className="flex items-center space-x-1 text-green-600 font-bold">
-                                                <CheckCircle className="h-3 w-3" />
-                                                <span>Process Completed</span>
+                                    <div className="flex items-start space-x-2">
+                                        {msg.role === 'agent' && (
+                                            <div className="mt-0.5">
+                                                {msg.type === 'analysis' && <Info className="h-4 w-4 text-blue-500" />}
+                                                {msg.type === 'decision' && <Scale className="h-4 w-4 text-[var(--stubhub-purple)]" />}
+                                                {msg.type === 'reasoning' && <FileText className="h-4 w-4 text-gray-400" />}
+                                                {msg.type === 'step' && <ShieldCheck className="h-4 w-4 text-green-500" />}
+                                                {msg.type === 'support' && <HelpCircle className="h-4 w-4 text-orange-500" />}
+                                                {msg.type === 'error' && <AlertCircle className="h-4 w-4 text-red-500" />}
+                                                {!msg.type && <Bot className="h-4 w-4 text-gray-400" />}
                                             </div>
+                                        )}
+
+                                        <div className="flex-1">
+                                            {msg.type === 'decision' && <p className="text-[10px] font-bold text-[var(--stubhub-purple)] uppercase mb-1">Official Decision</p>}
+                                            {msg.type === 'reasoning' && <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Reasoning</p>}
+                                            {msg.type === 'step' && <p className="text-[10px] font-bold text-green-600 uppercase mb-1">Action Required</p>}
+                                            {msg.type === 'support' && <p className="text-[10px] font-bold text-orange-600 uppercase mb-1">Support Options</p>}
+
+                                            <p className={`whitespace-pre-wrap ${msg.type === 'decision' ? 'text-sm font-semibold' : 'text-sm'}`}>
+                                                {msg.content}
+                                            </p>
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
                             </div>
                         ))}

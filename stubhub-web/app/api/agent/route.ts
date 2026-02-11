@@ -71,8 +71,8 @@ Possible resolutions:
 6. **Seller Penalty** - Flag account, temporary suspension, or permanent ban
 7. **Buyer Compensation** - Credit, upgrade, or courtesy voucher
 
-### Step 5: Explain Reasoning
-Be transparent. Tell the customer WHY you made this decision, not just WHAT it is.
+### Step 5: Explain Reasoning & Guide Customer
+Be transparent. Tell the customer WHY you made this decision, not just WHAT it is. Then, provide clear, conversational next steps for them to follow. If the case is resolved but they have further questions, or if the case is escalated, provide support options.
 
 ## Key Rules
 - Fairness First: Balance buyer and seller protection. Bias toward buyer safety on secondary marketplace.
@@ -81,6 +81,7 @@ Be transparent. Tell the customer WHY you made this decision, not just WHAT it i
 - First-Time Buyers/Sellers: Give them benefit of doubt but monitor closely.
 - High-Value Disputes: Escalate if transaction >$500 or complex legal issues.
 - No Guessing: If you don't have enough data, ask for it or escalate rather than guess.
+- Conversational Tone: In the "NEXT STEPS FOR CUSTOMER" section, use a helpful, empathetic, and clear tone as if you are talking directly to them.
 
 ## Output Format
 \`\`\`
@@ -93,6 +94,12 @@ ACTIONS:
     - [Action 3]
 FLAGS: [Any red flags or patterns detected]
 ESCALATION NEEDED: [Yes / No + reason]
+
+NEXT STEPS FOR CUSTOMER:
+[Provide 2-3 specific, conversational steps for the customer to take now. E.g., "Check your email for the refund confirmation," "Please upload a photo of the gate denial notice."]
+
+SUPPORT OPTIONS:
+[Provide options if the customer needs more help. E.g., "Connect with a Live Advocate (Available 24/7)," "Email our Fraud Specialization Team," "Call Priority Support at 1-800-STUBHUB."]
     \`\`\`
 `;
 
@@ -126,9 +133,9 @@ export async function POST(req: Request) {
         // 2. Construct Prompt
         const prompt = `
     ${SYSTEM_PROMPT}
-    
-    ---
-    
+
+---
+
     NEW DISPUTE CASE:
     Customer Message: "${message}"
     
@@ -152,7 +159,7 @@ export async function POST(req: Request) {
 
         try {
             // For debugging
-            console.log(`Connecting to Ollama at ${ollamaHost} with model ${ollamaModel}`);
+            console.log(`Connecting to Ollama at ${ollamaHost} with model ${ollamaModel} `);
 
             const response = await ollama.chat({
                 model: ollamaModel,
@@ -175,12 +182,12 @@ export async function POST(req: Request) {
             return NextResponse.json({
                 decision: `
 ISSUE SUMMARY: Connection to Local AI Failed.
-DECISION: System Error
-REASONING: Could not connect to Ollama at ${ollamaHost}. Is it running?
-ACTIONS:
-- Please run 'ollama serve' in your terminal.
-- Ensure model '${ollamaModel}' is pulled ('ollama pull ${ollamaModel}').
-FLAGS: Technical Error.
+    DECISION: System Error
+REASONING: Could not connect to Ollama at ${ollamaHost}. Is it running ?
+    ACTIONS :
+    - Please run 'ollama serve' in your terminal.
+- Ensure model '${ollamaModel}' is pulled('ollama pull ${ollamaModel}').
+    FLAGS: Technical Error.
 ESCALATION NEEDED: Yes, for system check.
 `
             });

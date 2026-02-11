@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StubHub Resolution Agent
 
-## Getting Started
+This is an AI-powered dispute resolution system for StubHub, built with Next.js and powered by a local LLM (Ollama).
 
-First, run the development server:
+## 🚀 Deployment (Docker)
+
+The easiest way to host this project is using Docker. This bundles the frontend and the AI server together.
+
+### Prerequisites
+- Docker and Docker Compose installed.
+
+### Start the Application
+Run the following command in the project root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker-compose up -d --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Note:** The first startup will take a few minutes as it automatically downloads the `llama3` model for Ollama.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Access the application at: `http://localhost:3000`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠 Local Development
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Requirements
+- Node.js 20+
+- [Ollama](https://ollama.com/) installed and running locally.
+- Run `ollama pull llama3` to get the required model.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Run the App
+```bash
+cd stubhub-web
+npm install
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ✨ Features
+- **AI Dispute Resolution**: Analyzes buyer/seller messages and makes fair decisions.
+- **Rich UI**: Interactive chat interface with clear status labels and icons.
+- **Deep Context**: Integrates with mock order, seller, and buyer data to inform decisions.
+- **Local Privacy**: All AI processing happens locally on your machine via Ollama.

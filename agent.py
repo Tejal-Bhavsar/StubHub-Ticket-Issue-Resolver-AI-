@@ -90,4 +90,14 @@ ACTIONS:
 - Send confirmation email to Buyer.
 FLAGS: None acting as major red flags against seller's long term history, but specific ticket batch quality is in question.
 ESCALATION NEEDED: No, falls within standard refund logic for verified buyer complaints.
+
+NEXT STEPS FOR CUSTOMER:
+1. Please check your registered email address for the refund confirmation details.
+2. The refund should appear on your original payment method within 3-5 business days.
+3. If you have any other questions regarding this transaction, feel free to ask!
+
+SUPPORT OPTIONS:
+- Connect with a Live Advocate (Available 24/7)
+- Email our Fraud Specialization Team at trust@stubhub.com
+- Call Priority Support at 1-800-STUBHUB
         """
