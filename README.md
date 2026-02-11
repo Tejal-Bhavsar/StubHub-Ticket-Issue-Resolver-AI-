@@ -1,8 +1,10 @@
 # StubHub-Ticket-Issue-Resolver-AI-
 
 Walkthrough - StubHub Web Application & AI Agent
+
 Link: https://onion-casual-role-burning.trycloudflare.com/
 Video Demo: https://drive.google.com/file/d/1KQh_jm2tT8_2mU_Ewska25Kmiz98OeNm/view?usp=drive_link
+
 <img width="1470" height="772" alt="image" src="https://github.com/user-attachments/assets/a1299c23-d3ac-4adb-a03b-efcbf8b1db77" />
 
 
