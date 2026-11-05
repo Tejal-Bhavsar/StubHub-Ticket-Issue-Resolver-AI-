@@ -2,7 +2,7 @@
 
 Walkthrough - StubHub Web Application & AI Agent
 
-Link: https://onion-casual-role-burning.trycloudflare.com/
+
 
 Video Demo: https://drive.google.com/file/d/1KQh_jm2tT8_2mU_Ewska25Kmiz98OeNm/view?usp=drive_link
 
